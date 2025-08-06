@@ -1,3 +1,4 @@
+package level2;
 
 public class 퍼즐게임챌린지 {
 

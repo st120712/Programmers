@@ -1,3 +1,4 @@
+package level2;
 
 public class 비밀코드해독 {
 

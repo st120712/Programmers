@@ -1,3 +1,4 @@
+package level2;
 
 public class 서버증설횟수 {
 
