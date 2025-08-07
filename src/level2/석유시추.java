@@ -1,6 +1,8 @@
 package level2;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 public class 석유시추 {
@@ -16,51 +18,51 @@ public class 석유시추 {
         int[] columnOil = new int[land[0].length];
         int maxOil = 0;
 
-        for (int y = 0; y < land.length; y++) {
-            for (int x = 0; x < land[0].length; x++) {
-                if (visited[y][x]) {
+        for (int i = 0; i < land.length; i++) {
+            for (int j = 0; j < land[i].length; j++) {
+                if (visited[i][j] || land[i][j] == 0) {
                     continue;
                 }
-                if (land[y][x] == 1) {
-                    Petroleum p = new Petroleum();
-                    dfs(x, y, p, visited, land);
-                    for (int c : p.columns) {
-                        columnOil[c] += p.getAmount();
+
+                Petroleum p = new Petroleum();
+                bfs(i, j, p, visited, land);
+                for (int c : p.columns) {
+                    columnOil[c] += p.amount;
+                    if (maxOil < columnOil[c]) {
+                        maxOil = columnOil[c];
                     }
                 }
-            }
-        }
-
-        for (int oil : columnOil) {
-            if (maxOil < oil) {
-                maxOil = oil;
             }
         }
 
         return maxOil;
     }
 
-    public static void dfs(int x, int y, Petroleum p, boolean[][] visited, int[][] land) {
-        if (y < 0 || x < 0 || y >= land.length || x >= land[0].length) {
-            return;
-        }
-        if (visited[y][x]) {
-            return;
-        }
-        if (land[y][x] == 0) {
-            return;
-        }
+    public static void bfs(int startR, int startC, Petroleum p, boolean[][] visited, int[][] land) {
+        Queue<int[]> queue = new LinkedList<>();
+        queue.offer(new int[]{startR, startC});
+        visited[startR][startC] = true;
+        int[][] direction = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
-        visited[y][x] = true;
-        p.addAmount(land[y][x]);
-        p.getColumns().add(x);
+        while (!queue.isEmpty()) {
+            int[] cur = queue.poll();
+            int r = cur[0];
+            int c = cur[1];
 
-        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+            p.addAmount(1);
+            p.getColumns().add(c);
 
-        for (int[] d : directions) {
-            int dx = x + d[0];
-            int dy = y + d[1];
-            dfs(dx, dy, p, visited, land);
+            for (int[] d : direction) {
+                int nr = r + d[0];
+                int nc = c + d[1];
+
+                if (nr >= 0 && nc >= 0 && nr < land.length && nc < land[0].length) {
+                    if (!visited[nr][nc] && land[nr][nc] == 1) {
+                        visited[nr][nc] = true;
+                        queue.offer(new int[]{nr, nc});
+                    }
+                }
+            }
         }
     }
 
