@@ -1,8 +1,6 @@
 package level2;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -15,56 +13,36 @@ public class 호텔대실 {
     }
 
     public static int solution(String[][] bookTime) {
-        Queue<int[]> bookTimeInMiutes = new PriorityQueue<>((a, b) -> a[0] - b[0]);
+        int n = bookTime.length;
+        int[][] bookings = new int[n][2];
 
-        for (int i = 0; i < bookTime.length; i++) {
+        for (int i = 0; i < n; i++) {
             int colon = 2;
             int start = Integer.parseInt(bookTime[i][0].substring(0, colon)) * 60 + Integer.parseInt(bookTime[i][0].substring(colon + 1));
             int end = Integer.parseInt(bookTime[i][1].substring(0, colon)) * 60 + Integer.parseInt(bookTime[i][1].substring(colon + 1));
 
-            bookTimeInMiutes.offer(new int[]{start, end});
+            bookings[i] = new int[]{start, end};
         }
+        Arrays.sort(bookings, (a, b) -> a[0] - b[0]);
 
-        for (int[] i : bookTimeInMiutes) {
-            System.out.println(Arrays.toString(i));
-        }
+        Queue<Integer> roomAvail = new PriorityQueue<>();
 
-        List<Integer> rooms = new ArrayList<>();
-        rooms.add(bookTimeInMiutes.poll()[1] + 10);
+        int maxRooms = 0;
+        for (int i = 0; i < n; i++) {
+            int start = bookings[i][0];
+            int endWithClean = bookings[i][1] + 10;
 
-        while (!bookTimeInMiutes.isEmpty()) {
-            int[] book = bookTimeInMiutes.poll();
-            int start = book[0];
-            int end = book[1] + 10;
-
-            int roomNum = -1;
-            int interval = Integer.MAX_VALUE;
-            for (int i = 0; i < rooms.size(); i++) {
-                int newInterval = start - rooms.get(i);
-
-                if (newInterval < 0) {
-                    continue;
-                }
-
-                if (newInterval == 0) {
-                    roomNum = i;
-                    interval = newInterval;
-                    break;
-                }
-
-                if (newInterval < interval) {
-                    roomNum = i;
-                    interval = newInterval;
-                }
+            if (!roomAvail.isEmpty() && roomAvail.peek() <= start) {
+                roomAvail.poll();
             }
 
-            if (roomNum == -1) {
-                rooms.add(end);
-            } else {
-                rooms.set(roomNum, end);
+            roomAvail.offer(endWithClean);
+
+            if (roomAvail.size() > maxRooms) {
+                maxRooms = roomAvail.size();
             }
         }
 
-        return rooms.size();
+        return maxRooms;
     }
 }
