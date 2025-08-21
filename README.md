@@ -17,14 +17,4 @@ Meanwhile, the compiled output files will be generated in the `bin` folder by de
 
 The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
 
-<!-- 지난 1년 커밋 수 -->
-![Commit Activity Year](https://img.shields.io/github/commit-activity/y/st120712/Programmers)
-
-<!-- 지난 1달 커밋 수 -->
-![Commit Activity Month](https://img.shields.io/github/commit-activity/m/st120712/Programmers)
-
-<!-- 지난 1주 커밋 수 -->
-![Commit Activity Week](https://img.shields.io/github/commit-activity/w/st120712/Programmers)
-
-<!-- 마지막 커밋 시각(브랜치 기준) -->
-![Last Commit](https://img.shields.io/github/last-commit/OWNER/REPO)
+![Alt](https://repobeats.axiom.co/api/embed/33c22b4d006fa9c67e84bac78cf40cda1031ad36.svg "Repobeats analytics image")
