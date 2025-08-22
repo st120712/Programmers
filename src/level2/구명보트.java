@@ -1,8 +1,6 @@
 package level2;
 
-import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.Deque;
 
 public class 구명보트 {
 
@@ -15,37 +13,20 @@ public class 구명보트 {
 
     public static int solution(int[] people, int limit) {
         Arrays.sort(people);
-        Deque<Integer> q = new ArrayDeque<>();
-        for (int p : people) {
-            q.offer(p);
-        }
+        int i = 0;
+        int j = people.length - 1;
+        int boats = 0;
 
-        int ans = 0;
-
-        while (!q.isEmpty()) {
-            int first = q.poll();
-            int remain = limit - first;
-
-            while (true) {
-                int last = q.pollLast();
-
-                if (remain - last < 0) {
-                    ans++;
-                } else {
-                    remain -= last;
-
-                    if (q.isEmpty()) {
-                        break;
-                    }
-
-                    if (remain - q.peek() < 0) {
-                        ans++;
-                        break;
-                    }
-                }
+        while (i <= j) {
+            if (people[i] + people[j] <= limit) {
+                i++;
+                j--;
+            } else {
+                j--;
             }
+            boats++;
         }
 
-        return ans;
+        return boats;
     }
 }
