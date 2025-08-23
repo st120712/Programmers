@@ -20,13 +20,13 @@ public class 피로도 {
     return 0;
   }
 
-  public static int dfs(int k, int[] dungeon, int cnt, int[][] dungeons) {
+  public static int dfs(int k, int[] dungeon, boolean[] visited, int cnt, int[][] dungeons) {
     if (k < dungeon[0]) {
       return cnt;
     }
 
     cnt++;
-    for (int[] d : dungeons) {
+    for (int : dungeons) {
       return dfs(k - dungeon[1], d, cnt, dungeons);
     }
   }
