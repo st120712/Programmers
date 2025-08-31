@@ -1,9 +1,6 @@
 package practice;
 
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 public class 연습장 {
 
@@ -11,36 +8,49 @@ public class 연습장 {
 
     }
 
-    public static int solution(String[][] bookTime) {
-        int n = bookTime.length;
-        int[][] bookings = new int[n][];
+    public static int[] solution(int[] answers) {
+        int n = answers.length;
+
+        int[] s1 = {1, 2, 3, 4, 5};
+        int[] s2 = {2, 1, 2, 3, 2, 4, 2, 5};
+        int[] s3 = {3, 3, 1, 1, 2, 2, 4, 4, 5, 5};
+
+        int a1 = 0;
+        int a2 = 0;
+        int a3 = 0;
 
         for (int i = 0; i < n; i++) {
-            int[] reserve = new int[2];
-            reserve[0] = toMinutes(bookTime[i][0]);
-            reserve[1] = toMinutes(bookTime[i][1]);
-            bookings[i] = reserve;
-        }
+            if (answers[i] == s1[i % s1.length]) {
+                a1++;
+            };
 
-        Arrays.sort(bookings, Comparator.comparingInt(a -> a[0]));
-
-        Queue<Integer> q = new PriorityQueue<>((a, b) -> a - b);
-        q.offer(bookings[0][1] + 10);
-
-        for (int i = 1; i < n; i++) {
-            int nextStart = bookings[i][0];
-            int nextEnd = bookings[i][1] + 10;
-
-            if (q.peek() <= nextStart) {
-                q.poll();
+            if (answers[i] == s2[i % s2.length]) {
+                a2++;
             }
-            q.offer(nextEnd);
+
+            if (answers[i] == s3[i % s3.length]) {
+                a3++;
+            }
         }
 
-        return q.size();
-    }
+        int maxA = Math.max(a1, a2);
+        maxA = Math.max(maxA, a3);
 
-    public static int toMinutes(String hhmm) {
-        return Integer.parseInt(hhmm.split(":")[0]) * 60 + Integer.parseInt(hhmm.split(":")[1]);
+        int[] ans = new int[3];
+        int size = 0;
+
+        if (maxA == a1) {
+            ans[size++] = 1;
+        }
+
+        if (maxA == a2) {
+            ans[size++] = 2;
+        }
+
+        if (maxA == a3) {
+            ans[size++] = 3;
+        }
+
+        return Arrays.copyOf(ans, size);
     }
 }
