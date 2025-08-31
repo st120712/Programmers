@@ -1,7 +1,8 @@
 package level2;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class 시소짝꿍 {
 
@@ -12,27 +13,47 @@ public class 시소짝꿍 {
     }
 
     public static long solution(int[] weights) {
-
-        long count = 0;
-        Set<Integer> set = new HashSet<>();
-        Set<Integer> ts = new HashSet<>();
-
+        Map<Integer, Integer> wCntMap = new HashMap<>();
         for (int w : weights) {
-            if (!ts.add(w)) {
-                count -= 2;
-            }
+            wCntMap.put(w, wCntMap.getOrDefault(w, 0) + 1);
         }
 
-        for (int w : weights) {
-            int[] tws = {w * 2, w * 3, w * 4};
+        Integer[] wList = wCntMap.keySet().toArray(new Integer[0]);
+        Arrays.sort(wList);
 
-            for (int tw : tws) {
-                if (!set.add(tw)) {
-                    count++;
+        long ans = 0;
+
+        for (int w : wList) {
+            long x = wCntMap.get(w);
+            ans += x * (x - 1) / 2;
+        }
+
+        for (int i = 0; i < wList.length; i++) {
+            int a = wList[i];
+            long ca = wCntMap.get(a);
+
+            if (a % 2 == 0) {
+                int b = a * 3 / 2;
+                if (b > a && wCntMap.containsKey(b)) {
+                    ans += ca * wCntMap.get(b);
+                }
+            }
+
+            {
+                int b = a * 2;
+                if (b > a && wCntMap.containsKey(b)) {
+                    ans += ca * wCntMap.get(b);
+                }
+            }
+
+            if (a % 3 == 0) {
+                int b = a * 4 / 3;
+                if (b > a && wCntMap.containsKey(b)) {
+                    ans += ca * wCntMap.get(b);
                 }
             }
         }
 
-        return count;
+        return ans;
     }
 }
