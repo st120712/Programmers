@@ -1,45 +1,29 @@
 package practice;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Queue;
+import java.util.HashMap;
+import java.util.Map;
 
 public class 연습장 {
 
     public static void main(String[] args) {
-        int[] progresses = {93, 30, 55};
-        int[] speeds = {1, 30, 5};
-        System.out.println(Arrays.toString(solution(progresses, speeds)));
     }
 
-    public static int[] solution(int[] progresses, int[] speeds) {
-        int n = progresses.length;
-
-        if (n == 1) {
-            return new int[]{1};
+    public static String solution(String[] participant, String[] completion) {
+        Map<String, Integer> m = new HashMap<>();
+        for (String p : participant) {
+            m.put(p, m.getOrDefault(p, 0) + 1);
         }
 
-        Queue<Integer> q = new ArrayDeque<>();
-
-        for (int i = 0; i < n; i++) {
-            q.offer((int) Math.ceil((100 - (double) progresses[i]) / speeds[i]));
+        for (String c : completion) {
+            m.put(c, m.get(c) - 1);
         }
 
-        List<Integer> ans = new ArrayList<>();
-
-        while (!q.isEmpty()) {
-            int cnt = 1;
-            int p1 = q.poll();
-
-            while (!q.isEmpty() && p1 >= q.peek()) {
-                q.poll();
-                cnt++;
+        for (String k : m.keySet()) {
+            if (m.get(k) == 1) {
+                return k;
             }
-            ans.add(cnt);
         }
 
-        return ans.stream().mapToInt(Integer::intValue).toArray();
+        return "null";
     }
 }
