@@ -1,56 +1,35 @@
 package practice;
 
-import java.util.Arrays;
+import java.util.Stack;
 
 public class 연습장 {
 
     public static void main(String[] args) {
-
+        int decimal = 12345;
+        System.out.println(solution(decimal));
     }
 
-    public static int[] solution(int[] answers) {
-        int n = answers.length;
+    public static String solution(int decimal) {
+        Stack<Integer> stack = new Stack<>();
 
-        int[] s1 = {1, 2, 3, 4, 5};
-        int[] s2 = {2, 1, 2, 3, 2, 4, 2, 5};
-        int[] s3 = {3, 3, 1, 1, 2, 2, 4, 4, 5, 5};
+        while (decimal > 0) {
+            int a = decimal / 2;
+            int b = decimal % 2;
 
-        int a1 = 0;
-        int a2 = 0;
-        int a3 = 0;
-
-        for (int i = 0; i < n; i++) {
-            if (answers[i] == s1[i % s1.length]) {
-                a1++;
-            };
-
-            if (answers[i] == s2[i % s2.length]) {
-                a2++;
+            if (a != 0) {
+                stack.push(b);
             }
-
-            if (answers[i] == s3[i % s3.length]) {
-                a3++;
+            if (a == 1) {
+                stack.push(a);
             }
+            decimal = a;
         }
 
-        int maxA = Math.max(a1, a2);
-        maxA = Math.max(maxA, a3);
-
-        int[] ans = new int[3];
-        int size = 0;
-
-        if (maxA == a1) {
-            ans[size++] = 1;
+        StringBuilder sb = new StringBuilder();
+        while (!stack.isEmpty()) {
+            sb.append(stack.pop());
         }
 
-        if (maxA == a2) {
-            ans[size++] = 2;
-        }
-
-        if (maxA == a3) {
-            ans[size++] = 3;
-        }
-
-        return Arrays.copyOf(ans, size);
+        return sb.toString();
     }
 }
