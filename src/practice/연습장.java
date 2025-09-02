@@ -1,77 +1,42 @@
 package practice;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class 연습장 {
 
     public static void main(String[] args) {
+        int[] nodes = {1, 2, 3, 4, 5, 6, 7};
+        System.out.println(Arrays.toString(solution(nodes)));
     }
 
-    public static int[] solution(String[] genres, int[] plays) {
-        Map<String, Genre> map = new HashMap<>();
+    public static String[] solution(int[] nodes) {
+        String[] ans = new String[3];
+        ans[0] = preorder(nodes, 0).trim();
+        ans[1] = inorder(nodes, 0).trim();
+        ans[2] = postorder(nodes, 0).trim();
 
-        for (int i = 0; i < genres.length; i++) {
-            Genre g = map.getOrDefault(genres[i], new Genre(genres[i]));
-            g.addSong(new int[]{i, plays[i]});
-            map.put(genres[i], g);
-        }
-
-        Genre[] arr = map.values().toArray(new Genre[0]);
-        Arrays.sort(arr, (a, b) -> Integer.compare(b.getTotalView(), a.getTotalView()));
-
-        List<Integer> ans = new ArrayList<>();
-
-        for (int i = 0; i < arr.length; i++) {
-            List<int[]> songs = arr[i].getSongs();
-            if (songs.size() == 1) {
-                ans.add(songs.get(0)[0]);
-            } else {
-                ans.add(songs.get(0)[0]);
-                ans.add(songs.get(1)[0]);
-            }
-        }
-
-        return ans.stream().mapToInt(Integer::intValue).toArray();
+        return ans;
     }
 
-    public static class Genre {
-
-        String title;
-        List<int[]> songs;
-        int totalView = 0;
-
-        public Genre(String title) {
-            this.title = title;
-            this.songs = new ArrayList<>();
+    public static String preorder(int[] nodes, int idx) {
+        if (idx >= nodes.length) {
+            return "";
         }
 
-        public void addSong(int[] song) {
-            int view = song[1];
-            totalView += view;
-            songs.add(song);
+        return "" + nodes[idx] + preorder(nodes, 2 * idx + 1) + preorder(nodes, 2 * idx + 2);
+    }
 
-            songs.sort((a, b) -> {
-                if (a[1] != b[1]) {
-                    return Integer.compare(b[1], a[1]);
-                }
-                return Integer.compare(a[0], b[0]);
-            });
+    public static String inorder(int[] nodes, int idx) {
+        if (idx >= nodes.length) {
+            return "";
         }
+        return "" + inorder(nodes, 2 * idx + 1) + nodes[idx] + inorder(nodes, 2 * idx + 2);
+    }
 
-        public String getTitle() {
-            return title;
+    public static String postorder(int[] nodes, int idx) {
+        if (idx >= nodes.length) {
+            return "";
         }
-
-        public List<int[]> getSongs() {
-            return songs;
-        }
-
-        public int getTotalView() {
-            return totalView;
-        }
+        return "" + postorder(nodes, 2 * idx + 1) + postorder(nodes, 2 * idx + 2) + nodes[idx];
     }
 }
