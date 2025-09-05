@@ -1,42 +1,66 @@
 package practice;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class 연습장 {
 
     public static void main(String[] args) {
-        int[] nodes = {1, 2, 3, 4, 5, 6, 7};
-        System.out.println(Arrays.toString(solution(nodes)));
+        int k = 4;
+        int[][] operations = {{0, 0, 1}, {1, 1, 2}, {0, 1, 2}, {1, 0, 2}};
+        System.out.println(Arrays.toString(solution(k, operations)));
     }
 
-    public static String[] solution(int[] nodes) {
-        String[] ans = new String[3];
-        ans[0] = preorder(nodes, 0).trim();
-        ans[1] = inorder(nodes, 0).trim();
-        ans[2] = postorder(nodes, 0).trim();
+    public static boolean[] solution(int k, int[][] operations) {
+        int[] parent = new int[k];
+        int[] rank = new int[k];
+
+        for (int i = 0; i < k; i++) {
+            parent[i] = i;
+            rank[i] = 0;
+        }
+
+        List<Boolean> list = new ArrayList<>();
+
+        for (int[] op : operations) {
+            if (op[0] == 0) {
+                union(op[1], op[2], rank, parent);
+            } else {
+                int a = find(op[1], parent);
+                int b = find(op[2], parent);
+                list.add(a == b);
+            }
+        }
+
+        boolean[] ans = new boolean[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            ans[i] = list.get(i);
+        }
 
         return ans;
     }
 
-    public static String preorder(int[] nodes, int idx) {
-        if (idx >= nodes.length) {
-            return "";
+    public static int find(int x, int[] parent) {
+        if (parent[x] == x) {
+            return x;
         }
-
-        return "" + nodes[idx] + preorder(nodes, 2 * idx + 1) + preorder(nodes, 2 * idx + 2);
+        return parent[x] = find(parent[x], parent);
     }
 
-    public static String inorder(int[] nodes, int idx) {
-        if (idx >= nodes.length) {
-            return "";
+    public static void union(int a, int b, int[] rank, int[] parent) {
+        a = find(a, parent);
+        b = find(b, parent);
+        if (a == b) {
+            return;
         }
-        return "" + inorder(nodes, 2 * idx + 1) + nodes[idx] + inorder(nodes, 2 * idx + 2);
-    }
-
-    public static String postorder(int[] nodes, int idx) {
-        if (idx >= nodes.length) {
-            return "";
+        if (rank[a] > rank[b]) {
+            parent[b] = a;
+        } else if (rank[a] < rank[b]) {
+            parent[a] = b;
+        } else {
+            parent[b] = a;
+            rank[a]++;
         }
-        return "" + postorder(nodes, 2 * idx + 1) + postorder(nodes, 2 * idx + 2) + nodes[idx];
     }
 }
