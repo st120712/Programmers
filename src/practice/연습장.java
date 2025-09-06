@@ -1,66 +1,84 @@
 package practice;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Queue;
 
 public class 연습장 {
 
     public static void main(String[] args) {
-        int k = 4;
-        int[][] operations = {{0, 0, 1}, {1, 1, 2}, {0, 1, 2}, {1, 0, 2}};
-        System.out.println(Arrays.toString(solution(k, operations)));
+        String[] maps = {"SOOOL", "XXXXO", "OOOOO", "OXXXX", "OOOOE"};
+        System.out.println(solution(maps));
     }
 
-    public static boolean[] solution(int k, int[][] operations) {
-        int[] parent = new int[k];
-        int[] rank = new int[k];
-
-        for (int i = 0; i < k; i++) {
-            parent[i] = i;
-            rank[i] = 0;
-        }
-
-        List<Boolean> list = new ArrayList<>();
-
-        for (int[] op : operations) {
-            if (op[0] == 0) {
-                union(op[1], op[2], rank, parent);
-            } else {
-                int a = find(op[1], parent);
-                int b = find(op[2], parent);
-                list.add(a == b);
+    public static int solution(String[] maps) {
+        int r = maps.length;
+        int c = maps[0].length();
+        int[] start = new int[2];
+        int[] lever = new int[2];
+        int[] exit = new int[2];
+        for (int i = 0; i < r; i++) {
+            char[] arr = maps[i].toCharArray();
+            for (int j = 0; j < c; j++) {
+                if (arr[j] == 'S') {
+                    start = new int[]{i, j};
+                }
+                if (arr[j] == 'L') {
+                    lever = new int[]{i, j};
+                }
+                if (arr[j] == 'E') {
+                    exit = new int[]{i, j};
+                }
             }
         }
 
-        boolean[] ans = new boolean[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            ans[i] = list.get(i);
+        int sToL = bfs(start, lever, maps);
+        if (sToL == -1) {
+            return -1;
+        }
+        int lToE = bfs(lever, exit, maps);
+        if (lToE == -1) {
+            return -1;
         }
 
-        return ans;
+        return sToL + lToE;
     }
 
-    public static int find(int x, int[] parent) {
-        if (parent[x] == x) {
-            return x;
-        }
-        return parent[x] = find(parent[x], parent);
-    }
+    public static int bfs(int[] from, int[] to, String[] maps) {
+        int r = maps.length;
+        int c = maps[0].length();
+        Queue<int[]> q = new ArrayDeque<>();
+        q.offer(from);
 
-    public static void union(int a, int b, int[] rank, int[] parent) {
-        a = find(a, parent);
-        b = find(b, parent);
-        if (a == b) {
-            return;
+        int[][] visited = new int[r][c];
+        for (int[] v : visited) {
+            Arrays.fill(v, -1);
         }
-        if (rank[a] > rank[b]) {
-            parent[b] = a;
-        } else if (rank[a] < rank[b]) {
-            parent[a] = b;
-        } else {
-            parent[b] = a;
-            rank[a]++;
+        visited[from[0]][from[1]] = 0;
+
+        int[] dr = {1, 0, -1, 0};
+        int[] dc = {0, 1, 0, -1};
+
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            int cr = cur[0];
+            int cc = cur[1];
+
+            for (int i = 0; i < 4; i++) {
+                int nr = cr + dr[i];
+                int nc = cc + dc[i];
+                if (nr < 0 || nr >= r || nc < 0 || nc >= c || visited[nr][nc] != -1 || maps[nr].toCharArray()[nc] == 'X') {
+                    continue;
+                }
+                visited[nr][nc] = visited[cr][cc] + 1;
+                int[] next = new int[]{nr, nc};
+                if (Arrays.equals(next, to)) {
+                    return visited[nr][nc];
+                }
+                q.offer(next);
+            }
         }
+
+        return -1;
     }
 }
