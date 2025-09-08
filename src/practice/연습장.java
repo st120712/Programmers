@@ -1,84 +1,103 @@
 package practice;
 
-import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.Queue;
 
 public class 연습장 {
 
     public static void main(String[] args) {
-        String[] maps = {"SOOOL", "XXXXO", "OOOOO", "OXXXX", "OOOOE"};
-        System.out.println(solution(maps));
+        int[][] board = {
+            {5, 3, 0, 0, 7, 0, 0, 0, 0},
+            {6, 0, 0, 1, 9, 5, 0, 0, 0},
+            {0, 9, 8, 0, 0, 0, 0, 6, 0},
+            {8, 0, 0, 0, 6, 0, 0, 0, 3},
+            {4, 0, 0, 8, 0, 3, 0, 0, 1},
+            {7, 0, 0, 0, 2, 0, 0, 0, 6},
+            {0, 6, 0, 0, 0, 0, 2, 8, 0},
+            {0, 0, 0, 4, 1, 9, 0, 0, 5},
+            {0, 0, 0, 0, 8, 0, 0, 7, 9}
+        };
+        solution(board);
+        for (int[] b : board) {
+            System.out.println(Arrays.toString(b));
+        };
     }
 
-    public static int solution(String[] maps) {
-        int r = maps.length;
-        int c = maps[0].length();
-        int[] start = new int[2];
-        int[] lever = new int[2];
-        int[] exit = new int[2];
-        for (int i = 0; i < r; i++) {
-            char[] arr = maps[i].toCharArray();
-            for (int j = 0; j < c; j++) {
-                if (arr[j] == 'S') {
-                    start = new int[]{i, j};
+    static int[][] Board;
+
+    public static int[][] solution(int[][] board) {
+        Board = board;
+        findSolution();
+        return board;
+    }
+
+    static boolean findSolution() {
+        Block emptyPos = findEmptyPosition();
+
+        if (emptyPos == null) {
+            return true;
+        }
+
+        int row = emptyPos.i;
+        int col = emptyPos.j;
+
+        for (int num = 1; num <= 9; num++) {
+            if (isValid(num, row, col)) {
+                Board[row][col] = num;
+                if (findSolution()) {
+                    return true;
                 }
-                if (arr[j] == 'L') {
-                    lever = new int[]{i, j};
-                }
-                if (arr[j] == 'E') {
-                    exit = new int[]{i, j};
+                Board[row][col] = 0;
+            }
+        }
+        return false;
+    }
+
+    static Block findEmptyPosition() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (Board[i][j] == 0) {
+                    return new Block(i, j);
                 }
             }
         }
-
-        int sToL = bfs(start, lever, maps);
-        if (sToL == -1) {
-            return -1;
-        }
-        int lToE = bfs(lever, exit, maps);
-        if (lToE == -1) {
-            return -1;
-        }
-
-        return sToL + lToE;
+        return null;
     }
 
-    public static int bfs(int[] from, int[] to, String[] maps) {
-        int r = maps.length;
-        int c = maps[0].length();
-        Queue<int[]> q = new ArrayDeque<>();
-        q.offer(from);
+    static boolean isValid(int num, int row, int col) {
+        return !(inRow(num, row) || inCol(num, col) || inBox(num, row, col));
+    }
 
-        int[][] visited = new int[r][c];
-        for (int[] v : visited) {
-            Arrays.fill(v, -1);
-        }
-        visited[from[0]][from[1]] = 0;
+    static boolean inRow(int num, int row) {
+        return Arrays.stream(Board[row]).anyMatch(n -> n == num);
+    }
 
-        int[] dr = {1, 0, -1, 0};
-        int[] dc = {0, 1, 0, -1};
-
-        while (!q.isEmpty()) {
-            int[] cur = q.poll();
-            int cr = cur[0];
-            int cc = cur[1];
-
-            for (int i = 0; i < 4; i++) {
-                int nr = cr + dr[i];
-                int nc = cc + dc[i];
-                if (nr < 0 || nr >= r || nc < 0 || nc >= c || visited[nr][nc] != -1 || maps[nr].toCharArray()[nc] == 'X') {
-                    continue;
-                }
-                visited[nr][nc] = visited[cr][cc] + 1;
-                int[] next = new int[]{nr, nc};
-                if (Arrays.equals(next, to)) {
-                    return visited[nr][nc];
-                }
-                q.offer(next);
+    static boolean inCol(int num, int col) {
+        for (int i = 0; i < 9; i++) {
+            if (Board[i][col] == num) {
+                return true;
             }
         }
+        return false;
+    }
 
-        return -1;
+    static boolean inBox(int num, int row, int col) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (Board[(row / 3) * 3 + i][(col / 3) * 3 + j] == num) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    static class Block {
+
+        int i, j;
+
+        public Block(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
     }
 }
