@@ -1,8 +1,8 @@
 package level2;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 
 public class 튜플 {
 
@@ -12,32 +12,17 @@ public class 튜플 {
     }
 
     public static int[] solution(String s) {
-        s = s.substring(1, s.length() - 1);
-        String[] arr = s.split("},");
-        List<List<Integer>> list = new ArrayList<>();
+        String[] parts = s.substring(2, s.length() - 2).split("\\},\\{");
 
-        for (int i = 0; i < arr.length; i++) {
-            List<Integer> temp = new ArrayList<>();
-            arr[i] = arr[i].split("\\{")[1];
-            if (i == arr.length - 1) {
-                arr[i] = arr[i].split("\\}")[0];
-            }
-            Arrays.stream(arr[i].split(",")).mapToInt(Integer::parseInt).forEach(temp::add);
-            list.add(temp);
-        }
+        Arrays.sort(parts, Comparator.comparing(String::length));
 
-        list.sort((a, b) -> Integer.compare(a.size(), b.size()));
-
-        List<Integer> ans = new ArrayList<>();
-
-        for (int i = 0; i < list.size(); i++) {
-            for (int n : list.get(i)) {
-                if (!ans.contains(n)) {
-                    ans.add(n);
-                }
+        LinkedHashSet<Integer> ordered = new LinkedHashSet<>();
+        for (String part : parts) {
+            for (String token : part.split(",")) {
+                ordered.add(Integer.parseInt(token));
             }
         }
 
-        return ans.stream().mapToInt(Integer::intValue).toArray();
+        return ordered.stream().mapToInt(Integer::intValue).toArray();
     }
 }
